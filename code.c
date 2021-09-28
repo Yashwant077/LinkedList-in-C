@@ -128,7 +128,28 @@ void delete_at_end(struct Node* head)
     printf("\nLast Node is deleted Successfully!!!\n");
 }
 
-void traversal(struct Node* ptr)
+void search_element(struct Node* head)
+{
+    int ele, index=0;
+    printf("Enter the element you want to search::");
+    scanf("%d",&ele);
+    while(head->next != NULL)
+    {
+        index+=1;
+        if(head->data == ele)
+        {
+            printf("Element found at position %d.\n",index);
+            break;
+        }
+        head = head->next;
+    }
+    if(head->next == NULL && head->data != ele)
+    {
+        printf("Oops! Element not found in the list.\n");
+    }
+}
+
+void printList(struct Node* ptr)
 {
     if(ptr == NULL)
     {
@@ -144,7 +165,6 @@ void traversal(struct Node* ptr)
     printf("\n");
 }
 
-
 int main()
 {
     struct Node* head = NULL;
@@ -158,7 +178,8 @@ int main()
                 "\n4. Delete at start"
                 "\n5. Delete after"
                 "\n6. Delete at end"
-                "\n7. Traverse"
+                "\n7. Search an element"
+                "\n8. Print List"
                 "\n0. Quit\n");
         scanf("%d", &ch);
         
@@ -183,7 +204,10 @@ int main()
                 delete_at_end(head);
                 break;
             case 7:
-                traversal(head);
+                search_element(head);
+                break;
+            case 8:
+                printList(head);
                 break;
             case 0:
                 exit(1);
