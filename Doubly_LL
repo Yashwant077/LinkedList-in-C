@@ -25,6 +25,11 @@ void insert_at_start(struct Node** head)
 void insert_after(struct Node* head)
 {
     int num,d;
+    if(head==NULL)
+    {
+        printf("List is Empty!!!\n");
+        return;
+    }
     printf("After which data you want to write::");
     scanf("%d",&num);
     while(head->next != NULL)
@@ -36,50 +41,49 @@ void insert_after(struct Node* head)
     if(head->data != num)
     {
         printf("Sorry!Your Choosen number is not in the list.\n");
+        return;
     }
     else
     {
+        struct Node *prev;
+        prev = head;
         printf("Enter the element you want to insert::");
         scanf("%d",&d);
         struct Node *new = (struct Node*)malloc(sizeof(struct Node));
         new->data = d;
-        new->next = head->next;
-        head->next = new;
-        new->prev = head;
+        new->next = prev->next;
+        prev->next = new;
+        new->prev = prev;
+        if (new->next != NULL)
+            new->next->prev = new;
     }
 }
 
-void insert_at_end(struct Node** head, struct Node* head)
+void insert_at_end(struct Node** head)
 {
     int d;
-    if((*head) == NULL)
+    if(*head == NULL)
     {
         printf("List is Empty for now.\n");
         printf("Enter the element you want to insert::");
         scanf("%d",&d);
         struct Node *new = (struct Node*)malloc(sizeof(struct Node));
         new->data = d;
-        new->next = (*head);
+        new->next = NULL;
         new->prev = NULL;
-        if((*head) != NULL)
-            (*head)->prev = new;
         (*head) = new;
         return;
     }
-    else
-    {
-        while(head->next != NULL)
-        {
-            head = head->next;
-        }
-        printf("Enter the element you want to insert at end::");
-        scanf("%d",&d);
-        struct Node *new = (struct Node*)malloc(sizeof(struct Node));
-        new->data = d;
-        new->next = NULL;
-        head->next = new;
-        new->prev = head;
-    }
+    struct Node* last = *head;
+    while(last->next != NULL)
+        last = last->next;
+    printf("Enter the element you want to insert at end::");
+    scanf("%d",&d);
+    struct Node *new = (struct Node*)malloc(sizeof(struct Node));
+    new->data = d;
+    new->next = NULL;
+    last->next = new;
+    new->prev = last;
 }
 
 void delete_at_start(struct Node** head)
@@ -89,10 +93,19 @@ void delete_at_start(struct Node** head)
         printf("List is already Empty!!!\n");
         return;
     }
+    else if((*head)->next == NULL && (*head)->prev == NULL)
+    {
+        printf("There is only one element in the List.\n");
+        printf("Deleting...\n");
+        free(*head);
+        printf("Element deleted Successfully!!!\n");
+        return;
+    }
     printf("\nStarting Node is deleting...");
     struct Node* temp = (struct Node*)malloc(sizeof(struct Node));
     temp = (*head);
     (*head) = temp->next;
+    (*head)->prev = NULL;
     free(temp);
     printf("\nStarting Node is deleted Successfully!!!\n");
 }
@@ -105,50 +118,59 @@ void delete_after(struct Node* head)
         return;
     }
     int num,d;
-    struct Node* prev;
     printf("After which data you want to Delete data::");
     scanf("%d",&num);
-    while(head->data != num)
+    while((head->data) != num)
     {
-        prev = head;
+        printf("Searching that node...\n");
         head = head->next;
     }
-    if(head->next==NULL)
+    if((head->next) ==NULL && (head->data) == num)
     {
-        printf("Sorry!Your Choosen number is not in the list.\n");
+        printf("%d is last in the list.\n",num);
         return;
     }
-    else
-    {
-        printf("\nNode is deleting...");
-        struct Node *temp = (struct Node*)malloc(sizeof(struct Node));
-        temp = head->next;
-        head->next = temp->next;
-        free(temp);
-        printf("\nNode is deleted Successfully!!!\n");
-    }
+    printf("\nNode is deleting...");
+    struct Node *temp = (struct Node*)malloc(sizeof(struct Node));
+    temp = head->next;
+    head->next = temp->next;
+    temp->next->prev = head;
+    free(temp);
+    printf("\nNode is deleted Successfully!!!\n");
 }
 
 void delete_at_end(struct Node* head)
 {
-    if(head->next == NULL)
+    if(head == NULL)
     {
         printf("List is already Empty!!!\n");
         return;
     }
-    struct Node *temp = (struct Node*)malloc(sizeof(struct Node));
-    *temp = *head;
-    struct Node *prev;
-    while(temp->next != NULL)
+    else if(head->next == NULL && head->prev == NULL)
     {
-        prev = temp;
-        temp = temp->next;
+        printf("There is only one element in this list.\n"
+               "Deleting this element...\n");
+        // struct Node *temp = (struct Node*)malloc(sizeof(struct Node));
+        // *temp = *head;
+        head = NULL;
+        printf("Element is deleted Successfully!!!\n");
+        return;
     }
-    printf("\nLast Node is deleting...");
-    prev->next = temp->next;
-    //prev->next = NULL;
-    free(temp);
-    printf("\nLast Node is deleted Successfully!!!\n");
+    else
+    {
+        struct Node *temp = (struct Node*)malloc(sizeof(struct Node));
+        *temp = *head;
+        while(temp->next != NULL)
+        {
+            temp = temp->next;
+        }
+        printf("\nLast Node is deleting...");
+        temp->prev->next = NULL;
+        //prev->next = NULL;
+        free(temp);
+        printf("\nLast Node is deleted Successfully!!!\n");
+        return;
+    }
 }
 
 void search_element(struct Node* head)
@@ -176,7 +198,7 @@ void printList(struct Node* ptr)
 {
     if(ptr == NULL)
     {
-        printf("List is Empty!!!");
+        printf("List is Empty!!!\n");
         return;
     }
     struct Node* new;
@@ -189,11 +211,11 @@ void printList(struct Node* ptr)
     }
     printf("\n");
     printf("Elements in the Reverse Order:: \n");
-    while(new != NULL)
+    do
     {
         printf(" %d ",new->data);
         new = new->prev;
-    }
+    }while(new != NULL);
     printf("\n");
 }
 
@@ -224,7 +246,7 @@ int main()
                 insert_after(head);
                 break;
             case 3:
-                insert_at_end(head);
+                insert_at_end(&head);
                 break;
             case 4:
                 delete_at_start(&head);
