@@ -1,2 +1,2 @@
 # LinkedList-in-C
-Here, I have written a code in C language for all the operations such as insertion, deletion, traversing, searching of Linked List.
+Here is a code snippet in C language that demonstrates various operations on a Linked List, including insertion, deletion, traversal, and searching.
